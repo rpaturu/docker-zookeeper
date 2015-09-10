@@ -1,0 +1,23 @@
+# file: roles/java/tasks/main.yml
+
+- name: Download zookeeper
+  get_url: url=http://mirror.csclub.uwaterloo.ca/apache/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz dest=/tmp/zookeeper-3.4.6.tar.gz mode=0744
+
+- name: Install zookeeper
+  unarchive: src=/tmp/zookeeper-3.4.6.tar.gz dest=/usr/share copy=no
+
+- name: Create a link to zookeeper version
+  file: src=/usr/share/zookeeper-3.4.6 dest=/usr/share/zookeeper state=link
+
+- name: Create zookeeper data directory
+  file: path=/var/lib/zookeeper state=directory mode=0755
+
+- name: Copy Confd files and startup script
+  copy: src={{ item.src }} dest={{ item.dest }} mode=0744
+  with_items:
+    - { src: 'zoo.cfg.tmpl', dest: '/etc/confd/templates' }
+    - { src: 'zoo.toml', dest: '/etc/confd/conf.d' }
+    - { src: 'launch.sh', dest: '/opt' }
+
+- name: Add docker image tag to environment file
+  lineinfile: dest=/etc/environment line='IMAGE_VERSION="{{ version }}"'

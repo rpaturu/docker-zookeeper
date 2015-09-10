@@ -1,0 +1,9 @@
+[template]
+src         = "zoo.cfg.tmpl"
+dest        = "/usr/share/zookeeper/conf/zoo.cfg"
+owner       = "root"
+group       = "root"
+mode        = "0644"
+prefix      = "/services/zookeeper"
+keys        = [ "/" ]
+reload_cmd  = "/usr/share/zookeeper/bin/zkServer.sh restart-foreground"

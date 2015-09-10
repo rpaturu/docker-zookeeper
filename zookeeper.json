@@ -1,0 +1,40 @@
+{
+  "variables": {
+    "base_version": "",
+    "version": ""
+  },
+  "builders": [
+    {
+      "type": "docker",
+      "image": "rpaturu/jdk7-base:{{user `base_version`}}",
+      "pull": true,
+      "commit": true
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible-local",
+      "playbook_file": "playbooks/local.yml",
+      "role_paths": [
+        "roles/zookeeper"
+      ],
+      "extra_arguments":[
+          "--extra-vars 'version={{user `version`}}'"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "docker-tag",
+      "repository": "rpaturu/zookeeper",
+      "tag": "{{user `version`}}",
+      "force": true
+    },
+    {
+      "type": "docker-tag",
+      "repository": "rpaturu/zookeeper",
+      "tag": "latest",
+      "force": true
+    }
+  ]
+}
